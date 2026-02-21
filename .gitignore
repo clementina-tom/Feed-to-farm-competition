@@ -1,0 +1,36 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Output & Checkpoints
+output/
+models/
+*.pkl
+*.model
+
+# Data
+# Note: we ignore the large datasets to prevent accidental commits
+Train.csv
+Test.csv
+customer_data.csv
+sku_data.csv
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+
+# Visual Studio Code
+.vscode/
+
+# GitHub Codespaces
+.devcontainer/.env
