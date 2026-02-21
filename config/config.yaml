@@ -1,0 +1,34 @@
+# Configuration for Feed-to-Farm ML Pipeline
+
+paths:
+  train_data: "Train.csv"
+  test_data: "Test.csv"
+  customer_data: "customer_data.csv"
+  sku_data: "sku_data.csv"
+  output_dir: "output"
+  model_dir: "models"
+  submission_file: "output/submission_hybrid_ensemble.csv"
+
+model:
+  seeds: [42, 202, 777, 1337, 999]
+  n_estimators: 2000
+  learning_rate: 0.02
+  num_leaves: 64
+  feature_fraction: 0.8
+  bagging_fraction: 0.8
+  bagging_freq: 1
+
+catboost:
+  iterations: 1500
+  learning_rate: 0.03
+  depth: 6
+
+scaling:
+  purchase_1w_scale: 1.15
+  purchase_2w_scale: 1.20
+  qty_1w_threshold: 0.015
+  qty_2w_threshold: 0.02
+
+ensemble:
+  lgbm_weight: 0.5
+  catboost_weight: 0.5
