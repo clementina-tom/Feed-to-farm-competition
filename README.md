@@ -6,6 +6,7 @@
 [![CatBoost](https://img.shields.io/badge/CatBoost-1.2-yellow)](https://catboost.ai/)
 [![Kaggle Competition](https://img.shields.io/badge/Zindi-Competition-20BEFF)]()
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)]()
+[![Score](https://img.shields.io/badge/Private%20Score-0.945-brightgreen)]()
 
 > **About this project**: A modular, production-ready Machine Learning pipeline that predicts future shopping baskets for surplus fresh produce. Built with a 5-seed Hybrid Ensemble (LGBM + CatBoost) to optimize both AUC and MAE.
 
@@ -131,6 +132,7 @@ scaling:
   purchase_1w_scale: 1.15            # Probability calibration for AUC
   qty_1w_threshold: 0.015            # Low-confidence noise elimination
 ```
+<<<<<<< HEAD
 
 ---
 
@@ -138,3 +140,5 @@ scaling:
 1. **Model Strategy**: A pure XGBoost model struggled with the categorical variance in the data natively compared to CatBoost. Blending LGBM for leaf-wise aggressive splits and CatBoost for symmetric categorical depth allowed the best of both worlds.
 2. **Target Leakage Risks**: Early EDA highlighted massive risks for leakage in rolling-average features. To protect the test-set purity, all lag features (`lag1`, `roll_mean_4`) were specifically strictly shifted to strictly align to week-starting intervals rather than continuous dates.
 3. **Decoupling is Key**: A unified objective loss function forces compromise. Separating classification (AUC logic) from regression (MAE logic) through dual training pipelines was the breakthrough variable that unlocked the `0.945` tier.
+=======
+>>>>>>> f4f4eb1ae719625fe6076f98ada773349cd18204
