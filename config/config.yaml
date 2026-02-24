@@ -1,5 +1,10 @@
 # Configuration for Feed-to-Farm ML Pipeline
 
+environment:
+  python_version: "3.9"
+  random_seed_strategy: "fixed"
+  deterministic: true
+
 paths:
   train_data: "Train.csv"
   test_data: "Test.csv"
