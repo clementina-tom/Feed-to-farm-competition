@@ -5,6 +5,9 @@
 [![LightGBM](https://img.shields.io/badge/LightGBM-4.6-green)](https://lightgbm.readthedocs.io/)
 [![CatBoost](https://img.shields.io/badge/CatBoost-1.2-yellow)](https://catboost.ai/)
 [![Score](https://img.shields.io/badge/Private%20Score-0.945-brightgreen)]()
+![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Zindi Competition](https://img.shields.io/badge/Zindi-Competition-20BEFF)
 
 > **About this project**: A modular, production-ready Machine Learning pipeline that predicts future shopping baskets for surplus fresh produce. Built with a 5-seed Hybrid Ensemble (LGBM + CatBoost) to optimize both AUC and MAE.
 
