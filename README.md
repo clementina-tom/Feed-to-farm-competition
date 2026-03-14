@@ -141,4 +141,3 @@ scaling:
 2. **Target Leakage Risks**: Early EDA highlighted massive risks for leakage in rolling-average features. To protect the test-set purity, all lag features (`lag1`, `roll_mean_4`) were specifically strictly shifted to strictly align to week-starting intervals rather than continuous dates.
 3. **Decoupling is Key**: A unified objective loss function forces compromise. Separating classification (AUC logic) from regression (MAE logic) through dual training pipelines was the breakthrough variable that unlocked the `0.945` tier.
 =======
->>>>>>> f4f4eb1ae719625fe6076f98ada773349cd18204
