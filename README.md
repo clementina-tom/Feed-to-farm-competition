@@ -1,12 +1,12 @@
 # 🥕 Feed-to-Farm: AI Demand Predictor
 
 [![Python CI](https://github.com/clementina-tom/Feed-to-farm-competition/actions/workflows/python-app.yml/badge.svg)](https://github.com/clementina-tom/Feed-to-farm-competition/actions/workflows/python-app.yml)
-[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/clementina-tom/feed-to-farm-dashboard)
+[![Hugging Face Space](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue)](https://huggingface.co/spaces/clementio/feed-to-farm-dashboard)
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/clementina-tom/Feed-to-farm-competition)
 
 ## 🌐 Live Dashboard
 You can test the production model and visualize business insights here: 
-👉 **[Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/clementina-tom/feed-to-farm-dashboard)**
+👉 **[Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/clementio/feed-to-farm-dashboard)**
 [![Python](https://img.shields.io/badge/Python-3.9+-blue)](https://www.python.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-4.6-green)](https://lightgbm.readthedocs.io/)
 [![CatBoost](https://img.shields.io/badge/CatBoost-1.2-yellow)](https://catboost.ai/)
