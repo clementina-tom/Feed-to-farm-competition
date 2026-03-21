@@ -1,6 +1,6 @@
 ---
 title: Feed-to-farm-competition
-emoji: carrot
+emoji: 
 colorFrom: green
 colorTo: yellow
 sdk: docker
