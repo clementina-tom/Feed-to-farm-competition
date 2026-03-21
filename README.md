@@ -1,4 +1,4 @@
-emoji---
+---
 title: Feed-to-farm-competition
 emoji: 
 🥕
@@ -8,5 +8,4 @@ sdk: docker
 pinned: false
 ---
 
-# Feed-to-Farm: AI Demand Predictor
-: 
+# 
