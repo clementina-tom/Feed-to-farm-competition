@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 import logging
+import pandera as pa
+from pandera import Column, DataFrameSchema
 
 class DataLoader:
     def __init__(self, config):
@@ -32,6 +34,18 @@ class DataLoader:
         """
         self.logger.info(f"Loading Train data from {self.paths['train_data']}")
         train = pd.read_csv(self.paths['train_data'])
+        
+        train_schema = DataFrameSchema({
+            "customer_id": Column(int, nullable=False, coerce=True),
+            "product_unit_variant_id": Column(int, nullable=False, coerce=True),
+            "qty_this_week": Column(float, pa.Check.ge(0), nullable=False, coerce=True)
+        })
+        try:
+            self.logger.info("Validating train schema...")
+            train = train_schema.validate(train)
+        except pa.errors.SchemaError as exc:
+            self.logger.error(f"Train schema validation failed: {exc}")
+            raise
         
         self.logger.info(f"Loading Test data from {self.paths['test_data']}")
         test = pd.read_csv(self.paths['test_data'])

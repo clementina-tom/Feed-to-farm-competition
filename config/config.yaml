@@ -5,6 +5,10 @@ environment:
   random_seed_strategy: "fixed"
   deterministic: true
 
+mlflow:
+  tracking_uri: "local"
+  experiment_name: "feed_to_farm_baseline"
+
 paths:
   train_data: "Train.csv"
   test_data: "Test.csv"

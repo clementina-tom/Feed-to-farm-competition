@@ -18,7 +18,14 @@ def main():
     
     parser = argparse.ArgumentParser(description="Feed-to-Farm ML Pipeline")
     parser.add_argument('--config', type=str, default='config/config.yaml', help='Path to config file')
+    parser.add_argument('--serve', action='store_true', help='Start the FastAPI server')
     args = parser.parse_args()
+
+    if args.serve:
+        logger.info("Starting API Server...")
+        import uvicorn
+        uvicorn.run("src.api:app", host="0.0.0.0", port=8000, reload=False)
+        return
 
     logger.info(f"Loading configuration from {args.config}")
     with open(args.config, 'r') as file:

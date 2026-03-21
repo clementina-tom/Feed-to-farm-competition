@@ -9,15 +9,12 @@ from typing import List, Optional
 from src.features.engineer import FeatureEngineer
 from src.models.predictor import ModelPredictor
 
-# Initialize FastAPI app
 app = FastAPI(title="Feed-to-Farm Prediction API", 
               description="Real-time purchasing recommendations for produce.")
 
-# Load Config
 with open("config/config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
-# Global variables for models and predictors
 MODELS = None
 PREDICTOR = ModelPredictor(config)
 FE_ENGINEER = FeatureEngineer()
@@ -28,24 +25,41 @@ def load_models():
     model_path = os.path.join(config['paths']['model_dir'], 'hybrid_ensemble.pkl')
     if os.path.exists(model_path):
         MODELS = joblib.load(model_path)
+        print(f"Models loaded successfully from {model_path}.")
     else:
         print(f"Warning: Model not found at {model_path}. Predict endpoint will fail.")
 
 class PurchaseRequest(BaseModel):
-    # This expects the raw columns needed for feature engineering
-    # For a real API, you might want to fetch some of this from a DB instead of passing it all
     customer_id: int
     product_unit_variant_id: int
-    # ... any other immediate fields if needed by FE_ENGINEER ...
-    # Note: In a production setting, the API would likely query the last X weeks of history 
-    # from a DB rather than requiring the caller to provide all lag features.
-    historical_data: List[dict] # List of weeks with 'week_start' and 'qty_this_week'
 
 class PredictionResponse(BaseModel):
     buy_1w_prob: float
     buy_2w_prob: float
     qty_1w: float
     qty_2w: float
+
+def get_latest_features(customer_id: int, product_unit_variant_id: int) -> pd.DataFrame:
+    # In production, this would query a feature store or database.
+    # We generate a dummy row with expected feature columns to pass to the predictor.
+    feature_cols = [
+        "lag1", "lag2", "roll_mean_4",
+        "cust_lag1", "cust_roll_4",
+        "global_lag1", "global_roll_4",
+        "pair_buy_rate", "pair_recency",
+        "is_new_pair", "month", "week_of_year"
+    ]
+    # We add dummy categorical encoded columns assuming label encoding returned 0
+    cat_cols = ["customer_category_x", "customer_status_x", "grade_name", "unit_name", "customer_category", "customer_status"]
+    # Provide safe minimal defaults
+    data = {c: 0.0 for c in feature_cols}
+    for c in cat_cols:
+         data[c] = 0
+    data["customer_id"] = customer_id
+    data["product_unit_variant_id"] = product_unit_variant_id
+    data["ID"] = f"{customer_id}X{product_unit_variant_id}"
+    
+    return pd.DataFrame([data]), feature_cols + cat_cols
 
 @app.get("/")
 def read_root():
@@ -54,35 +68,22 @@ def read_root():
 @app.post("/predict", response_model=PredictionResponse)
 def predict(request: PurchaseRequest):
     if MODELS is None:
-        raise HTTPException(status_code=503, detail="Models not loaded")
+        raise HTTPException(status_code=503, detail="Models not loaded. Train the model first.")
     
-    # 1. Convert historical data to DataFrame
-    df = pd.DataFrame(request.historical_data)
-    df['customer_id'] = request.customer_id
-    df['product_unit_variant_id'] = request.product_unit_variant_id
-    df['week_start'] = pd.to_datetime(df['week_start'])
-    
-    # 2. Run feature engineering (minimal subset needed for inference)
-    # This is a simplification; in production, you'd apply the same FeatureEngineer transforms
-    # to the input window provided in the request.
     try:
-        # Note: For real-time, we usually just need the features for the LAST week
-        # Here we mock the process since full-scale FE needs the whole train context
-        # In a real portfolio app, you'd show how you derive features for a single request.
+        # 1. Fetch live features (mocked for now)
+        df, all_features = get_latest_features(request.customer_id, request.product_unit_variant_id)
         
-        # We'll use the predictor logic directly for the demonstration
-        # Usually, you'd pass the transformed row to PREDICTOR.predict()
+        # 2. Call PREDICTOR
+        submission = PREDICTOR.predict(MODELS, df, all_features)
         
-        # This is a placeholder for the logic:
-        # 1. Transform request to feature vector
-        # 2. Call PREDICTOR.predict() on that vector
-        
-        return {
-            "buy_1w_prob": 0.85, # placeholder values for logic demo
-            "buy_2w_prob": 0.72,
-            "qty_1w": 5.5,
-            "qty_2w": 4.2
-        }
+        row = submission.iloc[0]
+        return PredictionResponse(
+            buy_1w_prob=float(row["Target_purchase_next_1w"]),
+            buy_2w_prob=float(row["Target_purchase_next_2w"]),
+            qty_1w=float(row["Target_qty_next_1w"]),
+            qty_2w=float(row["Target_qty_next_2w"]),
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
