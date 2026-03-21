@@ -17,4 +17,4 @@ jobs:
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push --force https://clementio:$HF_TOKEN@huggingface.co/spaces/clementio/feed-to-farm-dashboard main
+        run: git push https://Clementio:$HF_TOKEN@huggingface.co/spaces/Clementio/feed-to-farm-dashboard main
