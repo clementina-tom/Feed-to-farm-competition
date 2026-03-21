@@ -1,3 +1,12 @@
+---
+title: Feed-to-farm-competition
+emoji: carrot
+colorFrom: green
+colorTo: yellow
+sdk: docker
+pinned: false
+---
+
 # 🥕 Feed-to-Farm: AI Demand Predictor
 
 [![Python CI](https://github.com/clementina-tom/Feed-to-farm-competition/actions/workflows/python-app.yml/badge.svg)](https://github.com/clementina-tom/Feed-to-farm-competition/actions/workflows/python-app.yml)
