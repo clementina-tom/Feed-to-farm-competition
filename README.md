@@ -111,6 +111,16 @@ python main.py
 
 Output submission file will be saved to: `output/submission_hybrid_ensemble.csv`
 
+### ⚡ Quick cloud training (Codespaces / low-resource environments)
+
+If you are training from a phone or limited cloud CPU, use the lightweight config:
+
+```bash
+python main.py --config config/config.quick.yaml
+```
+
+This produces the same output/model paths but with fewer seeds and lower estimator counts for faster iteration.
+
 ---
 
 ## ⚙️ Configuration
