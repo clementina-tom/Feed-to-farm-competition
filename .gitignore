@@ -36,3 +36,6 @@ sku_data.csv
 
 # GitHub Codespaces
 .devcontainer/.env
+
+!models/
+!models/hybrid_ensemble.pkl
