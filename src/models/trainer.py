@@ -13,6 +13,14 @@ class ModelTrainer:
         self.config = config
         self.logger = logging.getLogger(self.__class__.__name__)
         self.seeds = config['model']['seeds']
+        mlflow_cfg = config.get('mlflow', {})
+        tracking_uri = mlflow_cfg.get('tracking_uri', 'local')
+        if tracking_uri == "local":
+            mlflow.set_tracking_uri(f"file:{os.path.abspath('mlruns')}")
+        elif tracking_uri:
+            mlflow.set_tracking_uri(tracking_uri)
+        experiment_name = mlflow_cfg.get('experiment_name', 'Default')
+        mlflow.set_experiment(experiment_name)
         
         self.lgb_params = {
             'n_estimators': config['model']['n_estimators'],
