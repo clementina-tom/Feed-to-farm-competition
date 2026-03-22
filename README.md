@@ -11,6 +11,7 @@ pinned: false
 
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/clementina-tom/Feed-to-farm-competition)
+[![Hugging Face Space](https://img.shields.io/badge/🤗_Space-Live_Dashboard-blue.svg)](https://huggingface.co/spaces/Clementio/feed-to-farm-dashboard)
 [![Python](https://img.shields.io/badge/Python-3.9+-blue)](https://www.python.org/)
 [![LightGBM](https://img.shields.io/badge/LightGBM-4.6-green)](https://lightgbm.readthedocs.io/)
 [![CatBoost](https://img.shields.io/badge/CatBoost-1.2-yellow)](https://catboost.ai/)
