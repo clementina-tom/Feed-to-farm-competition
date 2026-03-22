@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 # Quick training configuration for low-resource cloud environments
 
+=======
+>>>>>>> b715f59 (Add quick config and trained hybrid ensemble artifact)
 environment:
   python_version: "3.9"
   random_seed_strategy: "fixed"
