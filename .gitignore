@@ -17,6 +17,8 @@ output/
 models/
 *.pkl
 *.model
+!models/
+!models/hybrid_ensemble.pkl
 
 # Data
 # Note: we ignore the large datasets to prevent accidental commits
