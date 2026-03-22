@@ -44,11 +44,15 @@ class ModelTrainer:
 
     def train_hybrid_ensemble(self, train, features, cat_cols):
         self.logger.info(f"Starting Hybrid Ensemble Training over {len(self.seeds)} seeds...")
-        
-        mlflow.start_run()
-        mlflow.log_params(self.lgb_params)
-        mlflow.log_param("iterations", self.cb_params["iterations"])
-        mlflow.log_param("seeds", self.seeds)
+        mlflow_active = False
+        try:
+            mlflow.start_run()
+            mlflow_active = True
+            mlflow.log_params(self.lgb_params)
+            mlflow.log_param("iterations", self.cb_params["iterations"])
+            mlflow.log_param("seeds", self.seeds)
+        except Exception as exc:
+            self.logger.warning(f"MLflow start/logging disabled for this run: {exc}")
         
         models = {
             'lgb_clf1': [], 'lgb_clf2': [], 'lgb_reg1': [], 'lgb_reg2': [],
@@ -122,8 +126,12 @@ class ModelTrainer:
         model_path = os.path.join(self.config['paths']['model_dir'], 'hybrid_ensemble.pkl')
         self.logger.info(f"Saving models to {model_path}")
         joblib.dump(models, model_path)
-        mlflow.log_artifact(model_path)
-        
-        mlflow.end_run()
+        if mlflow_active:
+            try:
+                mlflow.log_artifact(model_path)
+            except Exception as exc:
+                self.logger.warning(f"MLflow artifact logging skipped: {exc}")
+            finally:
+                mlflow.end_run()
         
         return models
