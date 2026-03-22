@@ -39,7 +39,13 @@ jobs:
       env:
         PYTHONPATH: .
       run: |
-        python -m pytest
+        python -m pytest -v --tb=long 2>&1 | tee pytest_output.txt
+    - name: Upload pytest output on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pytest-output
+        path: pytest_output.txt
     - name: Smoke Test Pipeline Entrypoint
       run: |
         python main.py --help
