@@ -14,10 +14,12 @@ __pycache__/
 
 # Output & Checkpoints
 output/
-models/
-*.pkl
 *.model
 !models/
+!models/hybrid_ensemble.pkl
+
+# Models — ignore by default but whitelist the tracked ensemble
+models/*
 !models/hybrid_ensemble.pkl
 
 # Data

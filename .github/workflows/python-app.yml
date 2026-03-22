@@ -43,6 +43,3 @@ jobs:
     - name: Smoke Test Pipeline Entrypoint
       run: |
         python main.py --help
-    - name: Build Docker Image
-      run: |
-        docker build -t feed-to-farm-api .

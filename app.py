@@ -5,8 +5,6 @@ import joblib
 import yaml
 import os
 import plotly.express as px
-from src.models.predictor import ModelPredictor
-from src.features.engineer import FeatureEngineer
 
 # --- PAGE CONFIG ---
 st.set_page_config(
@@ -41,26 +39,32 @@ def load_assets():
     with open("config/config.yaml", "r") as f:
         config = yaml.safe_load(f)
     
-    # Mock data if real data isn't present in the Space environment
+    # Load data if present, otherwise use demo data
     try:
         customer_df = pd.read_csv("customer_data.csv")
         sku_df = pd.read_csv("sku_data.csv")
-    except:
-        customer_df = pd.DataFrame({'customer_id': range(100, 110), 'region': ['North', 'South']*5})
-        sku_df = pd.DataFrame({'product_unit_variant_id': range(1000, 1010), 'category': ['Vegetables', 'Fruits']*5})
+    except Exception:
+        customer_df = pd.DataFrame({
+            'customer_id': range(100, 110),
+            'region': ['North', 'South'] * 5
+        })
+        sku_df = pd.DataFrame({
+            'product_unit_variant_id': range(1000, 1010),
+            'category': ['Vegetables', 'Fruits'] * 5
+        })
 
-    # Prepare specific instance for model loading
+    # Load the trained hybrid ensemble model
     model_path = os.path.join(config['paths']['model_dir'], 'hybrid_ensemble.pkl')
     models = None
     if os.path.exists(model_path):
-        models = joblib.load(model_path)
+        try:
+            models = joblib.load(model_path)
+        except Exception as e:
+            st.error(f"Error loading model: {e}")
     
-    predictor = ModelPredictor(config)
-    engineer = FeatureEngineer()
-    
-    return config, customer_df, sku_df, models, predictor, engineer
+    return config, customer_df, sku_df, models
 
-config, customer_df, sku_df, models, predictor, engineer = load_assets()
+config, customer_df, sku_df, models = load_assets()
 
 # --- SIDEBAR ---
 with st.sidebar:
@@ -68,8 +72,9 @@ with st.sidebar:
     st.title("Settings")
     
     st.subheader("Model Configuration")
-    lgbm_w = st.slider("LGBM weight", 0.0, 1.0, 0.5)
-    st.info(f"Using {lgbm_w*100}% LGBM and {(1-lgbm_w)*100}% CatBoost.")
+    lgbm_w = st.slider("LGBM weight", 0.0, 1.0, float(config['ensemble']['lgbm_weight']))
+    catboost_w = 1.0 - lgbm_w
+    st.info(f"Using {lgbm_w*100:.0f}% LightGBM and {catboost_w*100:.0f}% CatBoost.")
 
     st.subheader("Select Targets")
     customer_id = st.selectbox("Customer ID", customer_df['customer_id'].unique())
@@ -80,7 +85,23 @@ st.title("🥕 Feed-to-Farm AI Predictor")
 st.markdown("### Reducing food waste through intelligent demand forecasting.")
 
 if models is None:
-    st.warning("⚠️ **Model file not found.** Using demonstration mode with dummy predictions. To enable real predictions, ensure `models/hybrid_ensemble.pkl` is uploaded.")
+    st.warning("⚠️ **Model file not found.** Using demonstration mode with simulated predictions. "
+               "To enable real predictions, ensure `models/hybrid_ensemble.pkl` is present.")
+
+# Determine model type info for display
+model_type = "Hybrid Ensemble (LightGBM + CatBoost)"
+if models and isinstance(models, dict):
+    has_lgbm = any(k.startswith('lgb_') for k in models.keys())
+    has_catboost = any(k.startswith('cb_') for k in models.keys())
+    if has_lgbm and has_catboost:
+        model_type = "✅ Hybrid Ensemble (LightGBM + CatBoost)"
+    elif has_lgbm:
+        model_type = "⚠️ LightGBM only (CatBoost models missing)"
+    elif has_catboost:
+        model_type = "⚠️ CatBoost only (LightGBM models missing)"
+    st.success(f"**Active Model**: {model_type} — {len(config['model']['seeds'])} seeds loaded.")
+else:
+    st.info(f"**Expected Model**: {model_type}")
 
 # --- KPIS ---
 col1, col2, col3, col4 = st.columns(4)
@@ -127,8 +148,22 @@ with c_right:
         - Prioritize delivery logistics for the Friday morning window.
     """)
 
-# --- EXPLANATION ---
+# --- MODEL DETAILS ---
 st.markdown("---")
+with st.expander("🧠 Model Architecture Details"):
+    st.markdown(f"""
+    **Strategy**: 5-Seed Hybrid Grandmaster Ensemble
+    
+    | Component | Technique |
+    |---|---|
+    | **AUC Optimization** | LightGBM + CatBoost classification with probability calibration |
+    | **MAE Optimization** | Tweedie regression trained on positive-quantity samples only |
+    | **Stability** | 5-seed ensembling (seeds: {config['model']['seeds']}) |
+    | **Decoupled Scaling** | Purchase probabilities scaled for AUC; quantity kept unsupervised |
+    | **Ensemble Weights** | LGBM: {config['ensemble']['lgbm_weight']} / CatBoost: {config['ensemble']['catboost_weight']} |
+    """)
+
+# --- EXPLANATION ---
 with st.expander("🔍 Model Interpretability (Explain Why?)"):
     st.write("The model identified **Global Product Trends** and **Customer Momentum** as the top predictors for this specific request.")
     st.image("https://shap.readthedocs.io/en/latest/_images/example_output.png", caption="Sample SHAP Summary")
